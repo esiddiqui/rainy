@@ -24,8 +24,11 @@ function getData(url) {
     console.log("getData() called");
     var url = "http://localhost:9001/api/dataItems/search/findByAnchor/?anchor=" + url;
     $.get(url, function(data, status) {
-        //alert("Data: " + data + "\nStatus: " + status);
-        $("#jqDivData").text(data._embedded.dataItems[0].title);
+        var res='no-data-found';
+        if (data._embedded.dataItems.length>0) {
+            res=data._embedded.dataItems[0].title;
+        }
+        $("#jqDivData").text(res);
     });
 }
 
