@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+
+  "name": "Rainy - A personal browsing assistent for Chrome",
+  "description": "This extension allows you to save metadata for websites you visit, like password, notes, to-dos and the like",
+  "version": "0.0.0.1",
+
+  "browser_action": {
+    "default_icon": "images/icon.png",
+    "default_popup": "popup.html",
+    "default_title": "it's raining" 
+ },
+  "permissions": [
+    "activeTab",
+    "storage",
+     "tabs",
+     "http://localhost/"
+  ]
+}
