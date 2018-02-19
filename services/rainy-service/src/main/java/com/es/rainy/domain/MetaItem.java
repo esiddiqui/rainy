@@ -6,6 +6,11 @@ public class MetaItem {
     public String key;
     public Object value;
 
+    public MetaItem(String key, Object value) {
+        this.key = key;
+        this.value = value;
+    }
+
     public String getKey() {
         return key;
     }
