@@ -25,8 +25,6 @@ public class RainyServiceApplication implements CommandLineRunner {
 	}
 
 	public  void run(String... args) {
-
-
 //	    System.out.println("Finding all");
 //	    List<DataItem> items = this.repository.findAll();
 //	    items.stream().forEach(
@@ -44,7 +42,6 @@ public class RainyServiceApplication implements CommandLineRunner {
 //                .build();
 //
 //        this.repository.save(adp);
-        System.out.println("Inserting 1 new records");
-
+//       System.out.println("Inserting 1 new records");
     }
 }
