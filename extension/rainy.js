@@ -30,29 +30,37 @@ function cleanseUrl(url) {
     index1= url.indexOf("/");
     if (index1!=-1)
     url = url.substring(0,index1);
+    console.log("anchor: " + url);
      return url;
 }
 
 function getData(url) {
+    console.log("getData() called");
     $("#jqDivData").text("***");
     if ( url==''|| url==undefined ) {
         return "null url"
     }
-    console.log("getData() called");
-    var url = "http://localhost:9001/api/dataItems/search/findByAnchor/?anchor=" + url;
-    $.get(url, function(data, status) {
-        var res='no-data-found';
-        if (data._embedded.dataItems.length>0) {
-            res=data._embedded.dataItems[0].title;
-            attachTable("#jqTbl",data._embedded.dataItems[0],"propsTable");
-        } else {
-            attachForm("#jqTbl");
-        }
-    });
+    try {
+        var url = "http://ehtesham.ddns.net:9001/api/dataItems/search/findByAnchor/?anchor=" + url;
+        //var url = "http://localhost:9001/api/dataItems/search/findByAnchor/?anchor=" + url;
+        $.get(url, function(data, status) {
+            var res='no-data-found';
+            if (data._embedded.dataItems.length>0) {
+                res=data._embedded.dataItems[0].title;
+                attachTable("#jqTbl",data._embedded.dataItems[0],"propsTable");
+            } else {
+                attachForm("#jqTbl");
+            }
+        });
+   } catch (err) {
+       console.err("Error making call to rainy service" + err)
+       attachForm("#jqTbl");
+   }
 }
 
 
 function attachForm(selector) {
+    console.log("attachForm() called");
     var initObj = initObject();
     //add editable table
     var table = getTableFromObject(initObj,"propsTable2",/*editable: */true);
@@ -63,6 +71,7 @@ function attachForm(selector) {
 }
 
 function attachTable(selector, data, tableId) {
+    console.log("attachTable() called");
     var table = getTableFromObject(data,tableId,/*editable: */false);
     table.appendTo(selector);
 }
@@ -76,6 +85,7 @@ function attachTable(selector, data, tableId) {
  * @param {*} editable specify if all the 
  */
 function getTableFromObject(data,tableId,editable){
+    console.log("getTableFromObject() called");
 	var table = $('<table></table>').attr({ id: tableId });
     var tr = [];
     for(var key in data) {
@@ -111,6 +121,7 @@ function getTableFromObject(data,tableId,editable){
  * @param {*} editable specify if values cells are editable
  */
 function getTableFromArray(arr,tableId,editable){
+    console.log("getTableFromArray() called");
     var table = $('<table></table>').attr({ 
         id: tableId 
     });
@@ -144,7 +155,7 @@ function getTableFromArray(arr,tableId,editable){
 
 
 function initObject() {
-
+    console.log("initObject() called");
     return {
         "category": "",
         "description": "",
