@@ -10,10 +10,13 @@ function fetchAndShow() {
        'lastFocusedWindow': true
     };   
     chrome.tabs.query(opts, function (tabs) {
+      
       var url = tabs[0].url;
       url = cleanseUrl(url);
       $("#jqDivUrl").text(url);
-      var data = getData(url);
+      var data = getData(url, tabs[0]);
+
+
     });
 }
 
@@ -34,34 +37,41 @@ function cleanseUrl(url) {
      return url;
 }
 
-function getData(url) {
+function getData(anchor,tab) {
     console.log("getData() called");
     $("#jqDivData").text("***");
-    if ( url==''|| url==undefined ) {
+    if ( anchor==''|| anchor==undefined ) {
         return "null url"
     }
     try {
-        var url = "http://ehtesham.ddns.net:9001/api/dataItems/search/findByAnchor/?anchor=" + url;
-        //var url = "http://localhost:9001/api/dataItems/search/findByAnchor/?anchor=" + url;
-        $.get(url, function(data, status) {
+        var serviceUri = "http://99.237.207.142:9001/api/dataItems/search/findByAnchor/?anchor=" + anchor;
+        //var serviceUri = "http://localhost:9001/api/dataItems/search/findByAnchor/?anchor=" + anchor;
+        $.get(serviceUri, function(data, status) {
             var res='no-data-found';
             if (data._embedded.dataItems.length>0) {
                 res=data._embedded.dataItems[0].title;
+
+                chrome.tabs.sendMessage(tab.id, {data: data._embedded.dataItems[0]}, function(response) {
+                    //console.log(response.farewell);
+                  });
+
                 attachTable("#jqTbl",data._embedded.dataItems[0],"propsTable");
+                $("#jqMsg").text("Metadata found");
             } else {
-                attachForm("#jqTbl");
+                attachForm("#jqTbl",anchor);
+                $("#jqMsg").text("Add metadata for this site...")
             }
         });
    } catch (err) {
        console.err("Error making call to rainy service" + err)
-       attachForm("#jqTbl");
+       attachForm("#jqTbl",anchor);
    }
 }
 
 
-function attachForm(selector) {
+function attachForm(selector,anchor) {
     console.log("attachForm() called");
-    var initObj = initObject();
+    var initObj = initObject(anchor);
     //add editable table
     var table = getTableFromObject(initObj,"propsTable2",/*editable: */true);
     table.appendTo(selector);
@@ -101,7 +111,9 @@ function getTableFromObject(data,tableId,editable){
             } else {
                 if (editable) {
                     var cell = $('<td></td>').text("").appendTo(row);
-                    var input = $("<input type='text' id='input_" + key + "' value='" + data[key] +"' />").appendTo(cell);  
+                    var disabled= (data[key] && data[key]!=='')?"disabled='disabled'":""; 
+                    var input = $("<input type='text' id='input_" + key + "' value='" + data[key] +"' " + disabled + "/>").appendTo(cell);  
+                   
                 } else {
                     $('<td></td>').text(data[key]).appendTo(row);
                 }
@@ -154,16 +166,16 @@ function getTableFromArray(arr,tableId,editable){
 
 
 
-function initObject() {
+function initObject(anchor) {
     console.log("initObject() called");
     return {
-        "category": "",
+        "anchor": anchor,
+        "category": "info",
         "description": "",
         "user": "",
         "email":"",
         "password": "",
         "hint": "",
-        "anchor": "",
         "title": "",
         "meta": [
             {   "key": "",
@@ -180,4 +192,15 @@ function initObject() {
 }
 
 
+// chrome.browserAction.onClicked.addListener(function(tab) {
+//     console.log("addListener_onClicked called");
+//     chrome.tabs.executeScript({
+//       code: 'document.body.style.backgroundColor="red"'
+//     });
+//   });
 
+
+//  chrome.tabs.executeScript(null, {code:"document.body.bgColor='red'"});
+
+//chrome.tabs.executeScript(null, {code:"alert('yolo')"});
+chrome.tabs.executeScript(null, {file: "form-filler.js"});

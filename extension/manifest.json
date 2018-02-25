@@ -14,9 +14,20 @@
     "activeTab",
     "storage",
      "tabs",
+     "<all_urls>",
      "http://localhost/",
      "http://99.237.207.142/",
-     "http://ehtesham.ddns.net/",
+     "http://ehtesham.ddns.net:9001/",
      "http://rainy.hofield.com/"
+     ,"www.google.ca/"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["http://*/*,https://*/*"],
+      "js": ["scripts/jquery.min.js", 
+        "form-filler.js"
+      ],
+      "run_at": "document_end" 
+    }   
   ]
 }
